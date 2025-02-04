@@ -1,0 +1,6 @@
+redis
+pandas
+python-dotenv
+pydantic
+duckdb
+pytest
