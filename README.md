@@ -60,11 +60,9 @@ How DuckDB Addresses Redis Limitations
 
 ### Implementation Assumptions
 
-Our current implementation uses sequential injection, where each event is immediately written to both Redis and DuckDB, with Redis storing only the latest feature values. While this approach is simple and ensures strong consistency, it may become a bottleneck at higher scales. 
+The Feature Store implements each storage layer with modularity in mind, following common interface patterns. While the current implementation directly uses specific database features, the architecture is designed to allow easy extension or replacement of storage backends. Ideally, feature logic and schemas should be abstracted from database implementations, but we've balanced this with simplicity to avoid over-engineering. This pragmatic approach provides a working foundation while keeping the door open for future enhancements such as adding new storage backends or improving the abstraction layer.
 
-A potential enhancement would be to implement buffered writes, where Redis temporarily stores multiple feature updates (including timestamp duplicates) before periodic synchronization with DuckDB. This buffered approach would improve write efficiency and handle higher throughput but introduces eventual consistency and requires more complex error handling. Additionally, it would increase Redis memory usage as multiple versions of features need to be stored during the buffer period. 
-
-The trade-off between immediate consistency and improved performance, along with increased memory requirements, would need to be evaluated based on specific use case requirements and infrastructure constraints.
+Our current implementation uses sequential injection, where each event is immediately written to both Redis and DuckDB, with Redis storing only the latest feature values. While this approach is simple and ensures strong consistency, it may become a bottleneck at higher scales. A potential enhancement would be to implement buffered writes, where Redis temporarily stores multiple feature updates (including timestamp duplicates) before periodic synchronization with DuckDB. This buffered approach would improve write efficiency and handle higher throughput but introduces eventual consistency and requires more complex error handling. Additionally, it would increase Redis memory usage as multiple versions of features need to be stored during the buffer period. The trade-off between immediate consistency and improved performance, along with increased memory requirements, would need to be evaluated based on specific use case requirements and infrastructure constraints.
 
 Known Limitations
 - Current Redis implementation using JSON is not optimal for memory usage
